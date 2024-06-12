@@ -1,0 +1,396 @@
+---
+title: Audit Trail
+description: Create an audit trail
+---
+
+import {LinkCard, Aside} from "@astrojs/starlight/components";
+
+## Installation
+
+<LinkCard
+    title="Laravel Auditing"
+    description="Laravel Auditing package"
+    href="https://laravel-auditing.com/guide/installation.html"
+/>
+
+### Installation
+
+```bash
+composer require owen-it/laravel-auditing
+```
+
+### Publish the migrations and config
+```bash
+php artisan vendor:publish --provider "OwenIt\Auditing\AuditingServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider "OwenIt\Auditing\AuditingServiceProvider" --tag="config"
+```
+
+### Run the migrations
+```bash
+php artisan migrate:fresh
+```
+
+
+## Model
+
+```php
+<?php
+
+namespace App\Models;
+
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Jetstream\HasProfilePhoto;
+use Laravel\Sanctum\HasApiTokens;
+
+use OwenIt\Auditing\Contracts\Auditable;
+
+class User extends Authenticatable implements Auditable
+{
+    use HasApiTokens;
+    use HasFactory;
+    use HasProfilePhoto;
+    use Notifiable;
+    use TwoFactorAuthenticatable;
+    use \OwenIt\Auditing\Auditable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'profile_photo_url',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+     	return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
+}
+```
+
+## Livewire
+
+```php
+//app/Http/Livewire/AuditTrail.php
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+use Livewire\WithPagination;
+use OwenIt\Auditing\Models\Audit;
+
+class AuditTrail extends Component
+{
+    use WithPagination;
+
+    public $sortField = 'created_at';
+
+    public $sortDirection = 'desc';
+
+    public $eventFilter = '';
+
+    public $userFilter = '';
+
+    public $auditableTypeFilter = '';
+
+    public $selectedEvent = '';
+
+    public $selectedUser = '';
+
+    public $search = '';
+
+    public $perPage = 10;
+
+    public $selectedAuditableType = '';
+
+    public function render()
+    {
+        if ($this->perPage) {
+            session()->remove('perPage');
+            session()->put('perPage', $this->perPage);
+        }
+
+        $searchTerms = explode(' ', $this->search);
+
+        $query = Audit::with('user')
+            ->where(function ($query) use ($searchTerms) {
+                foreach ($searchTerms as $term) {
+                    $term = strtolower($term);
+                    $query->where(function ($query) use ($term) {
+                        $query->whereRaw('LOWER(old_values) LIKE ?', ['%'.$term.'%'])
+                            ->orWhereRaw('LOWER(new_values) LIKE ?', ['%'.$term.'%']);
+                    });
+                }
+            })
+            ->when($this->selectedAuditableType, function ($query) {
+                $query->where('auditable_type', 'like', '%'.$this->selectedAuditableType.'%');
+            })
+            ->when($this->selectedUser, function ($query) {
+                $query->where('user_id', $this->selectedUser);
+            })
+            ->when($this->selectedEvent, function ($query) {
+                $query->where('event', $this->selectedEvent);
+            })
+            ->when($this->eventFilter, function ($query) {
+                $query->where('event', $this->eventFilter);
+            })
+            ->when($this->userFilter, function ($query) {
+                $query->where('user_id', $this->userFilter);
+            })
+            ->when($this->auditableTypeFilter, function ($query) {
+                $query->where('auditable_type', 'like', '%'.$this->auditableTypeFilter.'%');
+            })
+            ->orderBy($this->sortField, $this->sortDirection);
+
+        $auditTypes = Audit::select('auditable_type')->distinct()->get()->map(function ($audit) {
+            return substr($audit->auditable_type, strrpos($audit->auditable_type, '\\') + 1);
+        });
+
+        return view('livewire.audit-trail', [
+            'results' => $query->paginate($this->perPage),
+            'users' => \App\Models\User::all(),
+            'auditableTypes' => $auditTypes,
+        ]);
+    }
+
+    public function mount(): void
+    {
+        $this->perPage = session()->get('perPage', 10);
+    }
+
+    public function sort($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortDirection = 'asc';
+        }
+
+        $this->sortField = $field;
+    }
+
+    public function clearFilters()
+    {
+        $this->reset(['eventFilter', 'userFilter', 'auditableTypeFilter', 'selectedEvent', 'selectedUser', 'selectedAuditableType']);
+    }
+}
+```
+
+## Livewire View
+
+```html
+<div class="">
+    <div class="mb-4">
+        <div class="flex row-auto gap-2">
+            <select wire:model.live="selectedUser"
+                    class="rounded border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                <option value="">All Users</option>
+                @foreach ($users as $user)
+                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                @endforeach
+            </select>
+
+            <select wire:model.live="selectedEvent"
+                    class="rounded border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                <option value="">All Events</option>
+                @php $events = ['created', 'updated', 'restored', 'deleted']; @endphp
+                @foreach ($events as $event)
+                    <option value="{{ $event }}">{{ $event }}</option>
+                @endforeach
+            </select>
+            <select wire:model.live="selectedAuditableType"
+                    class="rounded border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                <option value="">All Auditable Types</option>
+                @foreach ($auditableTypes as $auditableType)
+                    <option
+                        value="{{ $auditableType }}">{{ ucwords(join(' ', preg_split('/(?=[A-Z])/', $auditableType))) }}
+                    </option>
+                @endforeach
+            </select>
+            <label class="w-full block text-sm font-medium text-gray-900 dark:text-gray-400"
+                   for="search">
+                <input wire:model.live="search" type="text"
+                       class="w-full rounded border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 h-full"
+                       placeholder="Search values...">
+            </label>
+
+            <x-select-per-page />
+            <x-button class="h-full" wire:click="clearFilters">
+                Clear Filters
+            </x-button>
+        </div>
+    </div>
+    <div class="p-4">
+        {{ $results->links() }}
+    </div>
+    <table class="table-auto w-full divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-800 dark:text-gray-200">
+        <thead>
+        <tr>
+            <th class="px-4 py-2 text-left">
+                <button wire:click="sort('user_id')">
+                    User
+                    @if ($sortField === 'user_id')
+                        <span class="ml-1">{{ $sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                    @endif</button>
+            </th>
+            <th class="px-4 py-2 text-left">
+                <button wire:click="sort('event')">
+                    Event
+                    @if ($sortField === 'event')
+                        <span class="ml-1">{{ $sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                    @endif</button>
+            </th>
+            <th class="px-4 py-2 text-left">
+                <button wire:click="sort('auditable_type')">
+                    Auditable Type
+                    @if ($sortField === 'auditable_type')
+                        <span class="ml-1">{{ $sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                    @endif</button>
+            </th>
+            <th class="px-4 py-2 text-left">Old Values</th>
+            <th class="px-4 py-2 text-left">New Values</th>
+            <th class="px-4 py-2 text-left">
+                <button wire:click="sort('created_at')">
+                    Created At
+                    @if ($sortField === 'created_at')
+                        <span class="ml-1">{{ $sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                    @endif</button>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach ($results as $result)
+            <tr class="{{ $loop->odd ? 'bg-gray-50 dark:bg-gray-900' : '' }}">
+                <td class="py-2 px-4">
+                    <button wire:click="$set('selectedUser', '{{ $result->user_id }}')"
+                            class="flex items-center gap-2 hover:text-blue-500">
+                        <img class="h-8 w-8 rounded-full object-cover"
+                             src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
+                        {{ $result->user->name ?? 'New User' }}
+                    </button>
+                </td>
+                <td class="py-2 px-4">
+                    <button wire:click="$set('selectedEvent', '{{ $result->event }}')">
+                        @if ($result->event == 'deleted')
+                            <x-badge type="danger" :text="$result->event" />
+                        @elseif ($result->event == 'restored')
+                            <x-badge type="info" :text="$result->event" />
+                        @elseif ($result->event == 'updated')
+                            <x-badge type="warning" :text="$result->event" />
+                        @else
+                            <x-badge type="success" :text="$result->event" />
+                        @endif
+                    </button>
+                </td>
+                <td class="py-2 px-4">
+                    @php $auditableType = ucwords(join('', preg_split('/(?=[A-Z])/', Str::after($result->auditable_type, 'App\Models\\')))); @endphp
+                    <button wire:click="$set('selectedAuditableType', '{{  $auditableType }}')">
+                        <x-badge type="light" :text="$auditableType" />
+                    </button>
+                </td>
+                <td class="py-2 px-4">
+                    @foreach ($result->old_values as $key => $value)
+                        @if ($key == 'password')
+                            {{ $key }}: {{ '********' }}
+                            @continue
+                        @endif
+                        <div class="flex">
+                            <div class="mr-2">
+                                {{ $key }}:
+                            </div>
+                            <div wire:click="$set('search', '{{ $value }}')"
+                                 class="cursor-pointer {{ strtolower($search) == strtolower($value) ? 'text-yellow-600 dark:text-yellow-200' : '' }}">
+                                {{ Str::limit($value, 50) }}
+                            </div>
+                        </div>
+                    @endforeach
+                </td>
+                <td class="py-2 px-4">
+                    @foreach ($result->new_values as $key => $value)
+                        @if ($key == 'password')
+                            {{ $key }}: {{ '********' }}
+                            @continue
+                        @endif
+                        <div class="flex">
+                            <div class="mr-2">
+                                {{ $key }}:
+                            </div>
+                            <div wire:click="$set('search', '{{ $value }}')"
+                                 class="cursor-pointer {{ strtolower($search) == strtolower($value) ? 'text-yellow-600 dark:text-yellow-200': '' }}">
+                                {{ $value }}
+                            </div>
+                        </div>
+                    @endforeach
+                </td>
+                <td class="py-2 px-4">
+                    {{ $result->created_at }}
+                </td>
+            </tr>
+        @endforeach
+
+        @if ($results->count() == 0)
+            <tr>
+                <td colspan="4" class="py-2 text-center">No results found</td>
+            </tr>
+        @endif
+        </tbody>
+    </table>
+    <div class="p-5">
+        {{ $results->links() }}
+    </div>
+</div>
+```
+
+## View
+
+```html
+<!-- resources/views/audit-trail.blade.php -->
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Audit Trail') }}
+        </h2>
+    </x-slot>
+
+    <div class="mx-auto py-10 sm:px-6 lg:px-8">
+            @livewire('audit-trail')
+    </div>
+</x-app-layout>
+```

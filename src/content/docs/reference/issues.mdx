@@ -1,0 +1,148 @@
+---
+title: Issues
+description: Common issues
+---
+
+import {LinkCard, Aside} from "@astrojs/starlight/components";
+
+## Admin inloggen
+```
+Als een admin wil ik kunnen inloggen in het systeem, zodat ik toegang heb tot de beheerfuncties van de applicatie.
+
+### Acceptatiecriteria:
+
+- [ ] De admin moet een gebruikersnaam en wachtwoord kunnen invoeren op de inlogpagina.
+- [ ] Het systeem moet de ingevoerde gegevens verifiëren en controleren of het een geldige admin-gebruiker is.
+- [ ] Bij succesvolle verificatie moet de admin worden doorgestuurd naar het beheerdashboard.
+- [ ] Bij mislukte verificatie moet het systeem een foutmelding weergeven en de admin de mogelijkheid bieden om opnieuw in te loggen.
+```
+
+## Klant inloggen
+```
+Als een klant wil ik kunnen inloggen in het systeem zodat ik toegang heb tot mijn persoonlijke account en de bijbehorende functionaliteit van de website kan gebruiken.
+
+### Acceptatiecriteria:
+
+- [ ] De klant moet een gebruikersnaam en wachtwoord kunnen invoeren op de inlogpagina.
+- [ ] Het systeem moet de ingevoerde gegevens verifiëren en controleren of het een geldige klant is.
+- [ ] Bij succesvolle verificatie moet de klant worden doorgestuurd naar de homepagina.
+- [ ] Bij mislukte verificatie moet het systeem een foutmelding weergeven en de klant de mogelijkheid bieden om opnieuw in te loggen.
+```
+
+## Klant registratie
+```
+Als een potentiële klant
+wil ik me kunnen registreren in het systeem
+zodat ik toegang kan krijgen tot mijn persoonlijke account en gebruik kan maken van de applicatie.
+
+### Acceptatiecriteria:
+
+- [x] De potentiële klant moet toegang hebben tot een registratiepagina.
+- [ ] Het systeem moet de ingevoerde gegevens valideren om dubbele accounts te voorkomen.
+- [ ] De registratiepagina moet de mogelijkheid bieden om persoonlijke gegevens, waaronder een gebruikersnaam en wachtwoord, in te voeren.
+- [x] Bij een succesvolle registratie moet de klant automatisch worden ingelogd in zijn nieuwe account en worden doorgestuurd naar de homepage.
+- [x] Het systeem moet bij een mislukte registratie een foutmelding weergeven en de potentiële klant de mogelijkheid bieden om opnieuw te proberen.
+```
+
+## 2FA
+```
+## Userstory
+
+Als gebruiker of admin wil ik 2FA (two-factor-authentication) kunnen aanzetten zodat mijn account *nog* veiliger is van hackers.
+
+## Acceptatiecriteria
+
+- [ ] Het werkt met een QR code en een authenticator app
+```
+
+## Wachtwoord resetten door admin
+```
+## Userstory
+
+Als admin wil ik wachtwoorden van klanten kunnen resetten zodat de klant weer kan inloggen met een gegenereerde wachtwoord.
+
+## Acceptatiecriteria
+
+- [ ] Moet voldoen aan de normale wachtwoordeisen (hoofdletter, kleine letter, cijfer, teken, etc)
+- [ ] Moet automatisch gegeneerd worden
+- [ ] Moet identiek zijn
+- [ ] Email sturen naar klant met gegenereerde wachtwoord
+```
+
+## Wachtwoord vergeten
+```
+Als klant wil ik mijn wachtwoord kunnen resetten als ik het ben vergeten zodat ik weer toegang krijg tot mijn account.
+
+### Acceptatiecriteria:
+
+- [ ] De klant moet toegang hebben tot een "Wachtwoord vergeten" link op de inlogpagina.
+- [ ] Het systeem moet een e-mail sturen met een link om het wachtwoord te resetten.
+- [ ] De klant moet een nieuw wachtwoord kunnen invoeren en bevestigen.
+- [ ] Het wachtwoord moet voldoen aan de wachtwoordeisen van het systeem.
+- [ ] Het systeem moet de klant informeren als het wachtwoord succesvol is gewijzigd.
+```
+
+
+## Audit Trail
+```
+Als manager wil ik de audit trail kunnen zien, zodat ik kan zien wie wat en wanneer heeft gewijzigd.
+
+### Acceptatiecriteria
+
+- [ ] Datum en tijd moet erbij staan
+- [ ] Naam van de user wie iets heeft gewijzigd
+- [ ] Filter functie zodat ik kan filteren op basis van rol (manager, sales, inventory)
+- [ ] Filteren op datum / tijd
+```
+
+## Gebruikers Overzicht
+```
+Als manager wil ik alle users en hun rol kunnen zien zodat ik een overzicht heb wie een account heeft op de website en wat hun rol is in het systeem (klant, inventory, sales)
+
+### Acceptatiecriteria:
+
+- [ ] De manager moet zijn ingelogd op zijn admin-account om toegang te krijgen tot de user overview.
+- [x] Moet kunnen zien in tekstform welke rol de user momenteel heeft.
+- [x] Moet de rol van een user kunnen aanpassen met behulp van een dropdown.
+```
+
+## Productbeheer
+```
+Als admin wil ik producten kunnen toevoegen, bewerken en verwijderen zodat ik het aanbod van de webshop kan beheren.
+
+### Acceptatiecriteria:
+
+- [ ] De admin moet een product kunnen toevoegen met een naam, beschrijving, prijs en voorraadstatus.
+- [ ] De admin moet bestaande producten kunnen bewerken.
+- [ ] De admin moet producten kunnen verwijderen.
+- [ ] Het systeem moet een bevestigingsprompt tonen bij het verwijderen van een product.
+
+```
+
+## Bestelgeschiedenis  bekijken
+```
+Als klant wil ik mijn bestelgeschiedenis kunnen bekijken zodat ik inzicht heb in mijn vorige aankopen.
+
+### Acceptatiecriteria:
+
+- [ ] De klant moet een lijst kunnen zien met alle voorgaande bestellingen.
+- [ ] Voor elke bestelling moeten datum, tijd, totaalbedrag en status zichtbaar zijn.
+- [ ] De klant moet de details van elke bestelling kunnen bekijken.
+
+```
+
+## Notificatiesysteem
+```
+Als klant wil ik notificaties kunnen ontvangen voor belangrijke gebeurtenissen (zoals verzending van mijn bestelling) zodat ik op de hoogte ben van de status van mijn aankoop.
+
+### Acceptatiecriteria:
+
+- [ ] De klant moet notificaties kunnen ontvangen via e-mail.
+- [ ] De klant moet notificaties kunnen ontvangen via SMS (indien beschikbaar).
+- [ ] De klant moet notificaties kunnen beheren via een instellingenpagina.
+
+```
+
+<LinkCard
+
+/>

@@ -1,0 +1,43 @@
+---
+title: Create a Laravel Jetstream Project
+description: Create a new Laravel Jetstream project with the Livewire stack
+---
+
+import {LinkCard, Aside} from "@astrojs/starlight/components";
+
+<LinkCard
+    title="Laravel Jetstream Installation"
+    description="How to install"
+    href="https://jetstream.laravel.com/installation.html"
+/>
+
+
+```bash
+composer create-project laravel/laravel example-app
+
+cd example-app
+
+composer require laravel/jetstream
+
+php artisan jetstream:install livewire --dark
+
+```
+
+### Install NPM Dependencies and Build
+
+```bash
+npm install
+npm run build
+php artisan migrate
+```
+
+### Environment Configuration
+
+```bash
+php artisan key:generate
+php artisan storage:link
+```
+
+<Aside type="note" header="Note">
+    Vergeet niet de .env.example te hernoemen naar .env en de database gegevens in te vullen.
+</Aside>

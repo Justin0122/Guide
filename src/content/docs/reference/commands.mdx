@@ -1,0 +1,125 @@
+---
+title: Handige Commands
+description: Een overzicht van nuttige commando's.
+---
+
+import {LinkCard, Aside} from "@astrojs/starlight/components";
+
+## Git
+
+### git init
+Initialiseer een nieuw Git-repository in de huidige map.
+```bash
+git init
+```
+
+### git clone
+Kloon een repository naar een nieuwe map.
+```bash
+git clone <repository-url>
+```
+
+### git add
+Voeg bestanden toe aan de staging area.
+```bash
+git add <file>
+```
+```bash
+# Voeg alle bestanden toe
+git add .
+```
+
+### git commit
+Commiteer bestanden naar de repository.
+```bash
+git commit -m "Commit message"
+```
+
+### git status
+Bekijk de status van de repository.
+```bash
+git status
+```
+
+### git log
+Bekijk de commitgeschiedenis.
+```bash
+git log
+```
+
+### git push
+Push lokale commits naar de remote repository.
+```bash
+git push
+```
+
+### git pull
+Haal de laatste wijzigingen op van de remote repository.
+```bash
+git pull
+```
+
+### git branch
+Toon de branches in de repository.
+```bash
+git branch
+```
+
+### git checkout
+Wissel tussen branches.
+```bash
+git checkout <branch>
+```
+
+```bash
+# Maak een nieuwe branch aan en wissel ernaar
+git checkout -b <branch>
+```
+
+### git merge (doen we via gitlab)
+Merge een branch in de huidige branch.
+```bash
+git merge <branch>
+```
+
+### git clean
+Verwijder ongebruikte bestanden en mappen.
+```bash
+git clean -df
+```
+
+
+### Tips & Tricks
+
+#### Stash veranderingen
+Sla je huidige veranderingen tijdelijk op in een stash zonder te commiten.
+```bash
+git stash
+# om de gestashte veranderingen weer toe te passen
+git stash apply
+# om de gestashte veranderingen te verwijderen
+git stash drop
+# om de gestashte veranderingen toe te passen en te verwijderen
+git stash pop
+```
+
+
+## Livewire
+
+### Component
+Maak een nieuwe Livewire-component aan.
+```bash
+php artisan livewire:make <component-name>
+```
+
+### Inline component
+Maak een nieuwe inline Livewire-component aan.
+```bash
+php artisan livewire:make <component-name> --inline
+```
+
+### Model component
+Maak een nieuwe Livewire-component aan met een model.
+```bash
+php artisan livewire:make <component-name> --model
+```

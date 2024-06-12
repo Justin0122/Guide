@@ -1,0 +1,38 @@
+---
+title: Crud Package
+description: Create, read, update, and delete data with the CRUD package
+---
+
+import {LinkCard, Aside} from "@astrojs/starlight/components";
+
+
+## Prerequisites
+Zet de
+
+
+## Installation
+```bash
+composer require justin0122/crud
+```
+
+## Usage
+```bash
+php artisan crud:make Post
+```
+
+Will generate the following files:
+- app/Livewire/Post.php
+- app/Livewire/Posts.php
+- app/Models/Post.php
+
+- database/migrations/2021_01_01_000000_create_posts_table.php
+
+- resources/views/livewire/posts/index.blade.php
+- resources/views/livewire/crud/create.blade.php
+- resources/views/livewire/crud/edit.blade.php
+
+<LinkCard
+    title="crud package"
+    description="install the crud package"
+    href="https://packagist.org/packages/justin0122/crud"
+/>
