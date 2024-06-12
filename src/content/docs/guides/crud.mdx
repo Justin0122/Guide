@@ -12,14 +12,36 @@ Zet de "minimum-stability" in je composer.json op "dev" om de package te kunnen 
 ```json
 // composer.json
 {
-    "minimum-stability": "dev",
+    "minimum-stability": "dev"
 }
 ```
 
 
 ## Installation
+
 ```bash
 composer require justin0122/crud
+```
+
+## Configuration
+```php
+//bootstrap/providers.php
+<?php
+
+return [
+    App\Providers\AppServiceProvider::class,
+    App\Providers\FortifyServiceProvider::class,
+    App\Providers\JetstreamServiceProvider::class,
+    \Justin0122\Crud\CrudServiceProvider::class,
+];
+```
+
+## Livewire directory
+```bash
+# voor linux:
+mkdir app/Livewire
+# voor windows:
+md app/Livewire
 ```
 
 ## Usage
@@ -27,7 +49,7 @@ composer require justin0122/crud
 php artisan crud:make Post
 ```
 
-Will generate the following files:
+Genereert de volgende bestanden:
 - app/Livewire/Post.php
 - app/Livewire/Posts.php
 - app/Models/Post.php
@@ -38,8 +60,41 @@ Will generate the following files:
 - resources/views/livewire/crud/create.blade.php
 - resources/views/livewire/crud/edit.blade.php
 
-<LinkCard
-    title="crud package"
-    description="install the crud package"
-    href="https://packagist.org/packages/justin0122/crud"
-/>
+## Na het genereren van de bestanden
+
+### Model Fillables
+```php ins={15-18, 8, 13}
+// app/Models/Post.php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class Post extends Model
+{
+    use HasFactory;
+    use SoftDeletes;
+
+    protected $fillable = [
+        'title',
+        'content'
+    ];
+}
+
+```
+
+### Migratie
+
+```php
+// database/migrations/2024_06_16_000000_create_posts_table.php
+Schema::create('posts', function (Blueprint $table) {
+    $table->id();
+    $table->string('title');
+    $table->text('content');
+    $table->timestamps();
+    $table->softDeletes();
+});
+```
