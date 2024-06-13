@@ -106,6 +106,13 @@ class User extends Authenticatable implements Auditable
 
 ## Livewire
 
+Create the following Livewire component:
+
+```bash
+php artisan make:livewire AuditTrail
+```
+
+Copy the following code into the newly created Livewire component:
 ```php
 //app/Http/Livewire/AuditTrail.php
 <?php
@@ -215,7 +222,9 @@ class AuditTrail extends Component
 
 ## Livewire View
 
+Copy the following code into the newly created Livewire view:
 ```html
+<!-- resources/views/livewire/audit-trail.blade.php -->
 <div class="">
     <div class="mb-4">
         <div class="flex row-auto gap-2">
@@ -379,7 +388,7 @@ class AuditTrail extends Component
 ```
 
 ## View
-
+Create a new view to display the audit trail:
 ```html
 <!-- resources/views/audit-trail.blade.php -->
 <x-app-layout>
@@ -393,4 +402,13 @@ class AuditTrail extends Component
             @livewire('audit-trail')
     </div>
 </x-app-layout>
+```
+
+## Routes
+Add the following route to your `web.php` file:
+```php
+//routes/web.php
+use App\Http\Livewire\AuditTrail;
+
+Route::get('/audit-trail', AuditTrail::class)->name('audit-trail');
 ```

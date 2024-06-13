@@ -17,6 +17,7 @@ export default defineConfig({
 						{ label: 'ERD', link: 'guides/erd/' },
 						{ label: 'Audit Trail', link: 'guides/audit-trail/' },
 						{ label: 'CRUD', link: 'guides/crud/' },
+						{ label: 'Spatie Permissions', link: 'guides/spatie-permissions/' },
 					],
 				},
 				{

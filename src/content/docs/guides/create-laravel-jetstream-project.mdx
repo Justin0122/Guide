@@ -38,6 +38,30 @@ php artisan key:generate
 php artisan storage:link
 ```
 
+### Permissions
+```bash
+composer require spatie/laravel-permission
+php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
+php artisan migrate:fresh
+```
+
+<LinkCard
+    title="CRUD Generator"
+    description="How to install"
+    href="/guides/crud/"
+/>
+
+### Audit Trail
+```bash
+composer require owen-it/laravel-auditing
+```
+
+<LinkCard
+    title="Laravel Auditing"
+    description="How to use"
+    href="/guides/audit-trail/"
+/>
+
 <Aside type="note" header="Note">
     Vergeet niet de .env.example te hernoemen naar .env en de database gegevens in te vullen.
 </Aside>
