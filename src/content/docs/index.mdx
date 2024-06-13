@@ -3,34 +3,39 @@ title: Welcome to Starlight
 description: Get started building your docs site with Starlight.
 template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
+  tagline: Laravel Jetstream Guide
   image:
     file: ../../assets/houston.webp
   actions:
-    - text: guides
+    - text: Guides
       link: /guides/create-laravel-jetstream-project/
       icon: right-arrow
       variant: primary
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 
-## Next steps
+## Guide
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
-	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
-	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
-	</Card>
+	<LinkCard
+        title="Create a Laravel Jetstream project"
+        description="Learn how to create a new Laravel Jetstream project."
+        href="/guides/create-laravel-jetstream-project/"
+    />
+    <LinkCard
+        title="Spatie Permissions"
+        description="Learn how to install and use Spatie Permissions."
+        href="/guides/spatie-permissions/"
+    />
+    <LinkCard
+        title="Handige Commands"
+        description="Een overzicht van nuttige commando's."
+        href="/reference/commands/"
+    />
+    <LinkCard
+        title="Issues"
+        description="Een overzicht van issues."
+        href="/reference/issues/"
+    />
 </CardGrid>
