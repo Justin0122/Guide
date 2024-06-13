@@ -118,8 +118,11 @@ Maak een nieuwe inline Livewire-component aan.
 php artisan livewire:make <component-name> --inline
 ```
 
-### Model component
-Maak een nieuwe Livewire-component aan met een model.
+### Storage link
+Maak een symlink naar de storage map.
+<Aside type="note" header="Note">
+Dit commando is alleen nodig als je bestanden in de storage map wilt benaderen via een URL, bijvoorbeeld voor afbeeldingen.
+</Aside>
 ```bash
-php artisan livewire:make <component-name> --model
+php artisan storage:link
 ```

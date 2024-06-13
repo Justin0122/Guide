@@ -13,19 +13,17 @@ import {LinkCard, Aside} from "@astrojs/starlight/components";
     href="https://laravel-auditing.com/guide/installation.html"
 />
 
-### Installation
-
 ```bash
 composer require owen-it/laravel-auditing
 ```
 
-### Publish the migrations and config
+### Publish migrations and config
 ```bash
 php artisan vendor:publish --provider "OwenIt\Auditing\AuditingServiceProvider" --tag="migrations"
 php artisan vendor:publish --provider "OwenIt\Auditing\AuditingServiceProvider" --tag="config"
 ```
 
-### Run the migrations
+### Run migrations
 ```bash
 php artisan migrate:fresh
 ```
@@ -33,7 +31,7 @@ php artisan migrate:fresh
 
 ## Model
 
-```php
+```php ins={12, 21} mark={14}
 <?php
 
 namespace App\Models;
@@ -45,7 +43,6 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
-
 use OwenIt\Auditing\Contracts\Auditable;
 
 class User extends Authenticatable implements Auditable
