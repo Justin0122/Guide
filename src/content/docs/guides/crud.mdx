@@ -37,6 +37,7 @@ return [
 ```
 
 ## Livewire directory
+Maak een Livewire directory aan in de app directory.
 ```bash
 # voor linux:
 mkdir app/Livewire
@@ -86,7 +87,7 @@ class Post extends Model
 
 ```
 
-### Migratie
+### Migration
 
 ```php
 // database/migrations/2024_06_16_000000_create_posts_table.php
@@ -100,6 +101,11 @@ Schema::create('posts', function (Blueprint $table) {
 ```
 
 ## Table
+
+<Aside type="note" header="Note">
+    De table component gebruikt standaard de @can('crud') directive om te controleren of de gebruiker de juiste permissies heeft.
+</Aside>
+
 ```html
 // resources/views/components/table.blade.php
 @props(['results', 'type', 'create' => false, 'fillables' => null, 'crud' => true, 'warning' => null])
@@ -123,7 +129,7 @@ Schema::create('posts', function (Blueprint $table) {
         </thead>
         <tbody>
         @if ($create)
-            @can('crudParty')
+            @can('crud')
 
                 <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                     <form wire:submit.prevent="create">
@@ -241,6 +247,9 @@ Schema::create('posts', function (Blueprint $table) {
 ```
 
 ## Livewire Component
+<Aside type="note" header="Note">
+    De package genereert globale Livewire componenten voor de create en edit views. Deze kun je per model aanpassen.
+</Aside>
 ```html
 <!-- resources/views/livewire/Post/index.blade.php -->
 <div class="container mx-auto px-4">
@@ -261,7 +270,10 @@ Schema::create('posts', function (Blueprint $table) {
 </div>
 ```
 
-### Add search functionality
+### Zoekfunctie en per page
+<Aside type="note" header="Note">
+    De package heeft geen standaard zoekfunctie en per page functionaliteit. Deze kun je zelf toevoegen.
+</Aside>
 ```html ins={11-22}
 <!-- resources/views/livewire/Post/index.blade.php -->
 
@@ -394,7 +406,7 @@ class Post extends Component
 
 ```
 
-## Add the routes
+## Routes
 ```php
     Route::get('/posts', function () {
         return view('posts');
