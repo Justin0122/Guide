@@ -27,14 +27,6 @@ De `cache` tabel bevat informatie over batches van taken, mogelijk voor het groe
 - `value`: Text, de waarde van de cache.
 - `expiration`: Integer, timestamp voor wanneer de cache verloopt.
 
-### Cache-locks Tabel
-De `cache_locks` tabel bevat informatie over cache locks, die mogelijk worden gebruikt om concurrentieproblemen bij toegang tot cachegegevens te voorkomen.
-
-- **Kolommen**:
-- `key`: String, de sleutel van de lock.
-- `owner`: String, de eigenaar van de lock.
-- `expiration`: Integer, timestamp voor wanneer de lock verloopt.
-
 ### Job-batches Tabel
 De `job_batches` tabel bevat informatie over batches van taken, mogelijk voor het groeperen en beheren van meerdere taken tegelijk.
 
