@@ -5,75 +5,83 @@ description: Uitleg van de tabellen die laravel genereert.
 
 import {LinkCard, Aside} from "@astrojs/starlight/components";
 
-## Tabeloverzicht
+## Entity-Relationship Diagram (ERD)
 
 ### Jobs Tabel
-De `jobs` tabel bevat informatie over taken die in het systeem worden uitgevoerd.
+De `jobs` tabel bevat informatie over taken die in het systeem worden uitgevoerd. Deze tabel wordt gebruikt door Laravel's queue-systeem om asynchrone taken te beheren. Wanneer een taak wordt ingepland om later uitgevoerd te worden, wordt deze in de `jobs` tabel opgeslagen. Dit helpt bij het ontkoppelen van lange, resource-intensieve processen van de hoofdtoepassing.
 
 - **Kolommen**:
-- `id`: Integer, de primaire sleutel van de tabel.
-- `queue`: String, de naam van de wachtrij waarop de taak staat.
-- `payload`: LongText, de JSON-gecodeerde gegevens van de taak.
-- `attempts`: Integer, het aantal pogingen om de taak uit te voeren.
-- `reserved_at`: Integer, timestamp voor wanneer de taak gereserveerd is.
-- `available_at`: Integer, timestamp voor wanneer de taak beschikbaar is.
+- `id`: Integer, de primaire sleutel van de tabel. Dit is een unieke identifier voor elke taak.
+- `queue`: String, de naam van de wachtrij waarop de taak staat. Laravel queues kunnen meerdere wachtrijen hebben voor verschillende soorten taken.
+- `payload`: LongText, de JSON-gecodeerde gegevens van de taak. Dit bevat alle informatie die nodig is om de taak uit te voeren.
+- `attempts`: Integer, het aantal pogingen om de taak uit te voeren. Als een taak mislukt, kan deze opnieuw worden geprobeerd tot een maximum aantal keren.
+- `reserved_at`: Integer, timestamp voor wanneer de taak gereserveerd is. Dit wordt ingesteld wanneer een taak wordt opgepakt door een worker.
+- `available_at`: Integer, timestamp voor wanneer de taak beschikbaar is. Dit geeft aan wanneer de taak klaar is om uitgevoerd te worden.
 - `created_at`: Integer, timestamp voor wanneer de taak is aangemaakt.
 
 ### Cache Tabel
-De `cache` tabel bevat informatie over batches van taken, mogelijk voor het groeperen en beheren van meerdere taken tegelijk.
+De `cache` tabel bevat informatie over gecachte gegevens. In een Laravel applicatie wordt caching gebruikt om vaak opgevraagde gegevens tijdelijk op te slaan en de prestaties van de applicatie te verbeteren door databasevragen te verminderen.
 
 - **Kolommen**:
-- `key`: String, de sleutel van de cache.
-- `value`: Text, de waarde van de cache.
-- `expiration`: Integer, timestamp voor wanneer de cache verloopt.
+- `key`: String, de sleutel van de cache. Dit dient als unieke identifier voor de cache-invoer.
+- `value`: Text, de waarde van de cache. Dit is de daadwerkelijke gecachte data.
+- `expiration`: Integer, timestamp voor wanneer de cache verloopt. Na deze tijd wordt de cache-invoer als ongeldig beschouwd en kan deze worden verwijderd.
+
+### Cache-locks Tabel
+De `cache_locks` tabel bevat informatie over cache locks. Cache locks worden gebruikt om concurrentieproblemen te voorkomen wanneer meerdere processen dezelfde gecachte gegevens proberen te lezen of schrijven.
+
+- **Kolommen**:
+- `key`: String, de sleutel van de lock. Dit dient als unieke identifier voor de lock.
+- `owner`: String, de eigenaar van de lock. Dit kan bijvoorbeeld een identificatie van het proces zijn dat de lock heeft ingesteld.
+- `expiration`: Integer, timestamp voor wanneer de lock verloopt. Na deze tijd wordt de lock als verlopen beschouwd en kan deze worden overschreven door andere processen.
 
 ### Job-batches Tabel
-De `job_batches` tabel bevat informatie over batches van taken, mogelijk voor het groeperen en beheren van meerdere taken tegelijk.
+De `job_batches` tabel bevat informatie over batches van taken. Dit wordt gebruikt om meerdere taken te groeperen en beheren als een enkele batch, wat handig is voor taken die logisch bij elkaar horen.
 
 - **Kolommen**:
-- `id`: String, de primaire sleutel van de tabel.
-- `name`: String, de naam van de batch.
+- `id`: String, de primaire sleutel van de tabel. Dit is een unieke identifier voor elke batch.
+- `name`: String, de naam van de batch. Dit kan een beschrijvende naam zijn die aangeeft wat de batch doet.
 - `total_jobs`: Integer, het totale aantal taken in de batch.
 - `pending_jobs`: Integer, het aantal wachtende taken in de batch.
 - `failed_jobs`: Integer, het aantal mislukte taken in de batch.
-- `failed_job_ids`: Text, de IDs van de mislukte taken in de batch.
-- `options`: Text, de opties voor de batch in JSON-formaat.
+- `failed_job_ids`: Text, de IDs van de mislukte taken in de batch. Dit kan helpen bij het debuggen en opnieuw proberen van mislukte taken.
+- `options`: Text, de opties voor de batch in JSON-formaat. Dit kan extra configuratiegegevens voor de batch bevatten.
 - `created_at`: Timestamp, wanneer de batch is aangemaakt.
 - `cancelled_at`: Timestamp, wanneer de batch is geannuleerd.
 - `finished_at`: Timestamp, wanneer de batch is voltooid.
 
-#### Failed_jobs Tabel
-De `failed_jobs` tabel bevat informatie over mislukte taken in het systeem.
+### Failed_jobs Tabel
+De `failed_jobs` tabel bevat informatie over mislukte taken in het systeem. Wanneer een taak meerdere keren mislukt, wordt deze in deze tabel opgeslagen om later te kunnen worden onderzocht en opnieuw geprobeerd.
 
 - **Kolommen**:
-- `id`: Integer, de primaire sleutel van de tabel.
-- `connection`: String, de naam van de verbinding.
-- `queue`: String, de naam van de wachtrij.
+- `id`: Integer, de primaire sleutel van de tabel. Dit is een unieke identifier voor elke mislukte taak.
+- `connection`: String, de naam van de verbinding die werd gebruikt toen de taak mislukte.
+- `queue`: String, de naam van de wachtrij waarop de taak stond.
 - `payload`: LongText, de JSON-gecodeerde gegevens van de taak.
-- `exception`: LongText, de uitzondering die de mislukking veroorzaakte.
+- `exception`: LongText, de uitzondering die de mislukking veroorzaakte. Dit helpt bij het debuggen van waarom de taak is mislukt.
 - `failed_at`: Timestamp, wanneer de taak is mislukt.
 
 ### Sessions Tabel
-De `sessions` tabel bevat sessie-informatie voor gebruikers die zijn ingelogd op het systeem.
+De `sessions` tabel bevat sessie-informatie voor gebruikers die zijn ingelogd op het systeem. Laravel gebruikt deze tabel om de sessiestatus van gebruikers bij te houden, zoals inlogstatus en sessiegegevens.
 
 - **Kolommen**:
-- `id`: String, de primaire sleutel van de tabel.
-- `user_id`: Integer, de ID van de gebruiker.
-- `ip_address`: String, het IP-adres van de gebruiker.
-- `user_agent`: Text, de user agent van de gebruiker.
-- `payload`: Text, de sessiegegevens.
-- `last_activity`: Integer, de laatste activiteitstijd.
+- `id`: String, de primaire sleutel van de tabel. Dit is een unieke identifier voor elke sessie.
+- `user_id`: Integer, de ID van de gebruiker. Dit is een buitenlandse sleutel die verwijst naar de gebruikers in het systeem.
+- `ip_address`: String, het IP-adres van de gebruiker. Dit kan worden gebruikt voor beveiligingsdoeleinden.
+- `user_agent`: Text, de user agent van de gebruiker. Dit geeft informatie over de browser en het apparaat van de gebruiker.
+- `payload`: Text, de sessiegegevens. Dit bevat alle informatie die nodig is om de sessie van de gebruiker te herstellen.
+- `last_activity`: Integer, de laatste activiteitstijd. Dit wordt gebruikt om inactieve sessies te detecteren en af te handelen.
 
 ### Personal_access_tokens Tabel
-De `personal_access_tokens` tabel bevat persoonlijke toegangstokens voor gebruikers, mogelijk voor API-toegang.
+De `personal_access_tokens` tabel bevat persoonlijke toegangstokens voor gebruikers, mogelijk voor API-toegang. Deze tokens worden gebruikt voor authenticatie bij het maken van API-aanroepen namens een gebruiker.
 
 - **Kolommen**:
-- `id`: Integer, de primaire sleutel van de tabel.
-- `tokenable_type`: String, het type van het token.
-- `tokenable_id`: Integer, de ID van het token.
-- `name`: String, de naam van het token.
-- `token`: String, de hash van het token.
-- `abilities`: Text, de mogelijkheden van het token.
+- `id`: Integer, de primaire sleutel van de tabel. Dit is een unieke identifier voor elk token.
+- `tokenable_type`: String, het type van het token. Dit geeft aan welk model het token kan gebruiken (bijv. `App\Models\User`).
+- `tokenable_id`: Integer, de ID van het token. Dit is een buitenlandse sleutel die verwijst naar de gebruiker of het model dat het token bezit.
+- `name`: String, de naam van het token. Dit kan een beschrijvende naam zijn die aangeeft waarvoor het token wordt gebruikt.
+- `token`: String, de hash van het token. Dit wordt gebruikt voor de daadwerkelijke authenticatie.
+- `abilities`: Text, de mogelijkheden van het token. Dit specificeert de toegangsrechten die het token heeft.
 - `last_used_at`: Timestamp, wanneer het token voor het laatst is gebruikt.
 - `created_at`: Timestamp, wanneer het token is aangemaakt.
 - `updated_at`: Timestamp, wanneer het token is bijgewerkt.
