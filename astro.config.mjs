@@ -18,6 +18,7 @@ export default defineConfig({
 						{ label: 'Audit Trail', link: 'guides/audit-trail/' },
 						{ label: 'CRUD', link: 'guides/crud/' },
 						{ label: 'Spatie Permissions', link: 'guides/spatie-permissions/' },
+						{ label: 'Mailserver', link: 'guides/mailserver/' },
 					],
 				},
 				{
